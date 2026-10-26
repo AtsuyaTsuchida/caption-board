@@ -23,6 +23,8 @@ FONT_DIR = Path(os.path.expanduser("~/Library/Fonts"))
 FONTS = {
     "light": FONT_DIR / "ZenKakuGothicNew-Light.ttf",
     "regular": FONT_DIR / "ZenKakuGothicNew-Regular.ttf",
+    "medium": FONT_DIR / "ZenKakuGothicNew-Medium.ttf",
+    "bold": FONT_DIR / "ZenKakuGothicNew-Bold.ttf",
 }
 
 SIZES = {  # 縦置きの (幅, 高さ) mm。B判はJIS
@@ -41,8 +43,8 @@ REGISTRATION = CMYKColor(1, 1, 1, 1)
 STYLE = {
     "margin_x": 24, "margin_top": 28, "margin_bottom": 24,
     "artist": dict(font="regular", size=15, leading=1.5, track=0.08, color=K100),
-    "title": dict(font="light", size=28, leading=1.45, track=0.04, color=K100),
-    "meta": dict(font="light", size=12, leading=1.8, track=0.04, color=K55),
+    "title": dict(font="medium", size=28, leading=1.45, track=0.04, color=K100),
+    "meta": dict(font="light", size=12, leading=1.8, track=0.04, color=K100),
     "body": dict(font="light", size=14, leading=1.95, track=0.0, color=K100),
     "gap_artist_title": 3.5, "gap_title_meta": 5, "gap_meta_rule": 14,
     "rule_len": 10, "rule_weight": 0.3, "gap_rule_body": 9,
@@ -339,9 +341,12 @@ def main():
     ap.add_argument("--no-marks", action="store_true", help="トンボなし（塗り足し3mmのみ）")
     ap.add_argument("--preview", action="store_true", help="仕上がり範囲のPNGも書き出す")
     ap.add_argument("--body-pt", type=float, help="解説文の文字サイズ(A4換算pt)を上書き")
+    ap.add_argument("--title-font", choices=FONTS, help="タイトルの書体ウェイトを上書き")
     a = ap.parse_args()
     if a.body_pt:
         STYLE["body"]["size"] = a.body_pt
+    if a.title_font:
+        STYLE["title"]["font"] = a.title_font
 
     fonts = {k: Font(v) for k, v in FONTS.items()}
     out = Path(a.out)

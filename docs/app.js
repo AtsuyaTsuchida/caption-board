@@ -21,10 +21,11 @@ async function loadFonts() {
     if (!res.ok) throw new Error(`${file} を読み込めませんでした`);
     return opentype.parse(await res.arrayBuffer());
   };
-  const [light, regular] = await Promise.all([
+  const [light, regular, medium] = await Promise.all([
     load("ZenKakuGothicNew-Light.ttf"), load("ZenKakuGothicNew-Regular.ttf"),
+    load("ZenKakuGothicNew-Medium.ttf"),
   ]);
-  return { light, regular };
+  return { light, regular, medium };
 }
 
 function readForm() {

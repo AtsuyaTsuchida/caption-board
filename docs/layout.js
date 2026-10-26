@@ -15,8 +15,8 @@ export const MARK_PAD = 15; // トンボ用の余白 mm
 export const STYLE = {
   margin_x: 24, margin_top: 28, margin_bottom: 24,
   artist: { font: "regular", size: 15, leading: 1.5, track: 0.08, color: "k100" },
-  title: { font: "light", size: 28, leading: 1.45, track: 0.04, color: "k100" },
-  meta: { font: "light", size: 12, leading: 1.8, track: 0.04, color: "k55" },
+  title: { font: "medium", size: 28, leading: 1.45, track: 0.04, color: "k100" },
+  meta: { font: "light", size: 12, leading: 1.8, track: 0.04, color: "k100" },
   body: { font: "light", size: 14, leading: 1.95, track: 0.0, color: "k100" },
   gap_artist_title: 3.5, gap_title_meta: 5, gap_meta_rule: 14,
   rule_len: 10, rule_weight: 0.3, gap_rule_body: 9,

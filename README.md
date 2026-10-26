@@ -4,7 +4,7 @@
 スチレンボード貼りなどのパネル印刷に入稿することを想定している。
 
 - 文字はすべてアウトライン（パス）化。PDFにフォントは埋め込まない
-- 色はK版のみのCMYK（本文・見出しはK100、制作年と素材はK55）
+- 色はK版のみのCMYK（すべてK100）
 - 塗り足し3mm、日本式トンボ付き。TrimBox / BleedBox を設定
 - 寸法はA4縦を基準に決めてあり、短辺の比で拡大縮小する。A判・B判（1:√2）ならどのサイズでも同じ見た目になる
 - 和文の禁則処理（追い出し・句読点のぶら下げ）、両端揃え、段落最終行の泣き別れ防止
@@ -23,7 +23,7 @@ Web版のファイルは `docs/` にあり、GitHub Pages で `main` の `/docs`
 
 ### 準備
 
-書体は [Zen Kaku Gothic New](https://fonts.google.com/specimen/Zen+Kaku+Gothic+New) の Light と Regular を使う。
+書体は [Zen Kaku Gothic New](https://fonts.google.com/specimen/Zen+Kaku+Gothic+New) の Light・Regular・Medium を使う。
 `~/Library/Fonts/` にインストールしておく（場所が違う場合は `build.py` の `FONT_DIR` を書き換える）。
 
 ```bash
