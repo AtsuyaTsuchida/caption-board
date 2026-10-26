@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caption Board</title>
+<meta name="description" content="展示用の作品キャプションボードの入稿用PDF（K版のみ・文字アウトライン・塗り足しとトンボ付き）をブラウザで作る">
+<style>
+  @font-face { font-family: "Zen Kaku Gothic New"; font-weight: 300; src: url(fonts/ZenKakuGothicNew-Light.ttf); font-display: swap; }
+  @font-face { font-family: "Zen Kaku Gothic New"; font-weight: 400; src: url(fonts/ZenKakuGothicNew-Regular.ttf); font-display: swap; }
+  :root {
+    --bg: #f3f3f1; --panel: #fff; --ink: #111; --sub: #777; --line: #d8d8d4; --warn: #a33;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: "Zen Kaku Gothic New", "Hiragino Sans", sans-serif; font-weight: 300;
+    font-size: 14px; line-height: 1.7; letter-spacing: 0.02em;
+  }
+  .app { display: grid; grid-template-columns: 380px 1fr; min-height: 100vh; }
+  aside {
+    background: var(--panel); border-right: 1px solid var(--line);
+    padding: 32px 28px 0; display: flex; flex-direction: column; gap: 28px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+  h1 { font-size: 15px; font-weight: 400; letter-spacing: 0.12em; margin: 0; }
+  .lead { color: var(--sub); font-size: 12px; margin: 6px 0 0; }
+  fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
+  legend { font-size: 11px; color: var(--sub); letter-spacing: 0.12em; padding: 0; margin-bottom: 12px; }
+  label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--sub); }
+  input[type=text], input[type=number], textarea, select {
+    font: inherit; color: var(--ink); font-size: 14px;
+    border: 0; border-bottom: 1px solid var(--line); border-radius: 0;
+    padding: 4px 0; background: transparent; outline: none; width: 100%;
+  }
+  select { cursor: pointer; }
+  input:focus, textarea:focus, select:focus { border-bottom-color: var(--ink); }
+  textarea { resize: vertical; min-height: 220px; line-height: 1.8; border: 1px solid var(--line); padding: 8px 10px; }
+  textarea:focus { border-color: var(--ink); }
+  .hint { font-size: 11px; color: var(--sub); }
+  .row { display: flex; gap: 16px; align-items: flex-end; }
+  .row > * { flex: 1; }
+  .seg { display: flex; border: 1px solid var(--line); }
+  .seg label { flex: 1; flex-direction: row; justify-content: center; padding: 5px 0; cursor: pointer; color: var(--ink); font-size: 13px; }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg label:has(input:checked) { background: var(--ink); color: #fff; }
+  .seg label:has(input:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .check { flex-direction: row; align-items: center; gap: 8px; color: var(--ink); font-size: 13px; cursor: pointer; }
+  .actions {
+    display: flex; gap: 10px; position: sticky; bottom: 0; z-index: 1;
+    background: var(--panel); padding: 14px 0 20px; margin-top: -14px; border-top: 1px solid var(--line);
+  }
+  button {
+    font: inherit; font-size: 13px; letter-spacing: 0.06em; padding: 10px 14px; cursor: pointer;
+    border: 1px solid var(--ink); background: var(--panel); color: var(--ink);
+  }
+  button.primary { background: var(--ink); color: #fff; flex: 1; }
+  button:disabled { opacity: 0.4; cursor: default; }
+  main { padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 14px; min-width: 0; }
+  #stage {
+    background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 30px rgba(0,0,0,.08);
+    width: min(100%, 640px, calc((100vh - 140px) * 0.7071)); aspect-ratio: 210 / 297;
+  }
+  #stage svg { display: block; width: 100%; height: 100%; }
+  #stage.landscape { width: min(100%, 900px, calc((100vh - 140px) * 1.4142)); }
+  #spec { font-size: 12px; color: var(--sub); text-align: center; }
+  #warn { white-space: pre-line; color: var(--warn); font-size: 12px; max-width: 640px; }
+  #status { font-size: 12px; color: var(--sub); }
+  footer { font-size: 11px; color: var(--sub); line-height: 1.8; }
+  footer a { color: inherit; }
+  @media (max-width: 860px) {
+    .app { grid-template-columns: 1fr; }
+    aside { border-right: 0; border-bottom: 1px solid var(--line); padding: 24px 16px 0; position: static; height: auto; overflow: visible; }
+    main { padding: 24px 16px; order: -1; }
+    #stage, #stage.landscape { width: 100%; }
+  }
+</style>
+<script src="vendor/pdf-lib.min.js"></script>
+<script src="vendor/opentype.min.js"></script>
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div>
+      <h1>CAPTION BOARD</h1>
+      <p class="lead">作品キャプションボードの入稿用PDFを作ります。入力した内容はこのブラウザの中だけで処理され、どこにも送信されません。</p>
+    </div>
+
+    <form id="form" onsubmit="return false">
+      <fieldset>
+        <legend>作品</legend>
+        <label>作家名<input type="text" id="artist" autocomplete="off"></label>
+        <label>作品タイトル<input type="text" id="title" autocomplete="off"></label>
+        <div class="row">
+          <label>制作年<input type="text" id="year" autocomplete="off"></label>
+          <label style="flex:2">素材・技法<input type="text" id="medium" autocomplete="off"></label>
+        </div>
+        <label>解説文<textarea id="text"></textarea>
+          <span class="hint">改行で段落を分けます。空行を入れると段落の間が少し空きます。</span>
+        </label>
+      </fieldset>
+
+      <fieldset style="margin-top:28px">
+        <legend>仕様</legend>
+        <div class="row">
+          <label>サイズ<select id="size"></select></label>
+          <div>
+            <div class="seg" role="radiogroup" aria-label="向き">
+              <label><input type="radio" name="orient" value="portrait" checked>縦</label>
+              <label><input type="radio" name="orient" value="landscape">横</label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <label>解説文の文字サイズ（A4換算 pt）<input type="number" id="bodyPt" min="8" max="24" step="0.5"></label>
+        </div>
+        <label class="check"><input type="checkbox" id="marks" checked>トンボを付ける</label>
+        <span class="hint">サイズを変えても、文字や余白は短辺の比で拡大縮小され、同じ見た目になります。</span>
+      </fieldset>
+    </form>
+
+    <footer>
+      PDFは文字をすべてアウトライン化し、K版のみのCMYKで書き出します。塗り足し3mm、TrimBox・BleedBox設定済み。<br>
+      書体：<a href="https://github.com/googlefonts/zen-kakugothic">Zen Kaku Gothic New</a>（<a href="fonts/OFL.txt">SIL OFL 1.1</a>）<br>
+      <a href="https://github.com/AtsuyaTsuchida/caption-board">GitHub</a>
+    </footer>
+    <div class="actions">
+      <button class="primary" id="pdf" disabled>PDFを書き出す</button>
+      <button id="png" disabled>PNG（確認用）</button>
+    </div>
+
+  </aside>
+
+  <main>
+    <div id="status">フォントを読み込んでいます…</div>
+    <div id="stage"></div>
+    <div id="spec"></div>
+    <div id="warn" hidden></div>
+  </main>
+</div>
+</body>
+</html>

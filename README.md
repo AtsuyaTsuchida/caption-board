@@ -9,7 +9,19 @@
 - 寸法はA4縦を基準に決めてあり、短辺の比で拡大縮小する。A判・B判（1:√2）ならどのサイズでも同じ見た目になる
 - 和文の禁則処理（追い出し・句読点のぶら下げ）、両端揃え、段落最終行の泣き別れ防止
 
-## 準備
+## Web版
+
+https://atsuyatsuchida.github.io/caption-board/
+
+ブラウザで入力し、その場でプレビューを見ながら入稿用PDFを書き出せる。インストールは不要。
+入力した内容はブラウザの中だけで処理され、外部には送信されない。
+
+Web版のファイルは `docs/` にあり、GitHub Pages で `main` の `/docs` から配信している。
+レイアウトは `docs/layout.js` に、`build.py` と同じ寸法と組版規則で実装している。片方を変えるときは、もう片方も合わせて変える。
+
+## コマンドライン版
+
+### 準備
 
 書体は [Zen Kaku Gothic New](https://fonts.google.com/specimen/Zen+Kaku+Gothic+New) の Light と Regular を使う。
 `~/Library/Fonts/` にインストールしておく（場所が違う場合は `build.py` の `FONT_DIR` を書き換える）。
@@ -19,7 +31,7 @@ python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 ```
 
-## データ
+### データ
 
 `captions.json` に作品ごとの内容を書く。1作品につき1枚のPDFが書き出される。
 
@@ -32,7 +44,7 @@ python3 -m venv .venv
 | `medium` | 素材・技法 |
 | `text` | 解説文。`\n` で段落を分け、`\n\n` で段落間にアキを入れる |
 
-## 書き出し
+### 書き出し
 
 ```bash
 .venv/bin/python build.py --size B3 --orient portrait --preview
@@ -52,3 +64,8 @@ python3 -m venv .venv
 ## 注意
 
 厳密な PDF/X-1a（OutputIntent の埋め込み）には対応していない。業者から指定がある場合は別途変換する。
+
+## ライセンス
+
+- 書体 Zen Kaku Gothic New：SIL Open Font License 1.1（`docs/fonts/OFL.txt`）
+- 同梱ライブラリ pdf-lib・opentype.js：MIT License（`docs/vendor/LICENSES.md`）

@@ -46,8 +46,8 @@ STYLE = {
     "body": dict(font="light", size=14, leading=1.95, track=0.0, color=K100),
     "gap_artist_title": 3.5, "gap_title_meta": 5, "gap_meta_rule": 14,
     "rule_len": 10, "rule_weight": 0.3, "gap_rule_body": 9,
-    "body_max_em": 34,
-    "para_gap": 1.5,           # 段落間の行送り（1行送り=1）         # 1行の最大文字数
+    "body_max_em": 34,         # 1行の最大文字数
+    "para_gap": 1.5,           # 段落間の行送り（1行送り=1）
     "landscape_meta_ratio": 0.40,
 }
 
