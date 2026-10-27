@@ -28,7 +28,7 @@ FONTS = {
 }
 
 SIZES = {  # 縦置きの (幅, 高さ) mm。B判はJIS
-    "A4": (210, 297), "A3": (297, 420), "A2": (420, 594),
+    "A5": (148, 210), "A4": (210, 297), "A3": (297, 420), "A2": (420, 594),
     "B4": (257, 364), "B3": (364, 515), "B2": (515, 728),
 }
 
@@ -220,7 +220,8 @@ class Board:
 
     def rule(self, x_mm, y_mm, len_mm):
         self.c.setStrokeColor(K100)
-        self.c.setLineWidth(STYLE["rule_weight"] * self.k)
+        # 小さいサイズでも印刷でかすれないよう、A4での太さを下限にする
+        self.c.setLineWidth(STYLE["rule_weight"] * max(self.k, 1))
         y = self.oy - y_mm * mm
         self.c.line(self.ox + x_mm * mm, y, self.ox + (x_mm + len_mm) * mm, y)
 

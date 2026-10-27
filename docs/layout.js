@@ -4,7 +4,7 @@
 export const MM = 72 / 25.4;
 
 export const SIZES = { // 縦置きの [幅, 高さ] mm。B判はJIS
-  A4: [210, 297], A3: [297, 420], A2: [420, 594],
+  A5: [148, 210], A4: [210, 297], A3: [297, 420], A2: [420, 594],
   B4: [257, 364], B3: [364, 515], B2: [515, 728],
 };
 
@@ -173,7 +173,8 @@ class Board {
     const y = this.oy + yMM * MM;
     this.lines.push({
       x1: this.ox + xMM * MM, y1: y, x2: this.ox + (xMM + lenMM) * MM, y2: y,
-      w: this.style.rule_weight * this.k, color: "k100",
+      // 小さいサイズでも印刷でかすれないよう、A4での太さを下限にする
+      w: this.style.rule_weight * Math.max(this.k, 1), color: "k100",
     });
   }
 }
